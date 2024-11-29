@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnancy App UI</title>
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('https://josesoriano.com/wp-content/uploads/2023/02/4j059aga5s4-1024x683.jpg'); /* Replace with your background image URL */
+            background-size: cover; /* Ensures the background image covers the entire viewport */
+            background-position: center; /* Centers the background image */
+            background-attachment: fixed; /* Keeps the background image fixed while scrolling */
+            color: #333; /* Default text color */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.651); /* Add semi-transparent background to content for readability */
+            padding: 20px;
+            border-radius: 0px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for contrast */
+        }
+
+        /* Navbar styles */
+        .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+        }
+
+        .navbar nav a.active {
+            color: red;
+        }
+
+        /* Content styles */
+        .content {
+            display: flex;
+            flex-direction: row;
+            margin-top: 20px;
+            gap: 40px;
+        }
+
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border: none solid #ddd;
+            border-radius: 10px;
+            
+        }
+
+        .quote {
+            margin-top: 10px;
+            font-style: italic;
+            color: #666;
+        }
+
+        .info-section {
+            text-align: center;
+        }
+
+        .info-section h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .info-section p {
+            margin-bottom: 20px;
+        }
+
+        .button {
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        background-color: #0056b3;
+        color: white;
+        padding: 15px 30px;
+        border-radius: 15px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        background-color: #0056b3;
+    }
+
+        .photos {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .photo-box {
+            width: 300px;
+            height: 300px;
+            border-radius: 5px;
+            object-fit: cover; /* Ensures the image maintains its aspect ratio */
+            border: 1px solid #aaa;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .photo-caption {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .photos {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .photo-box {
+                width: 80%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header/Navbar -->
+        <header class="navbar">
+            <div class="logo">Logo</div>
+            <nav>
+                <a href="index.html" class="active">Home</a>
+                <a href="profile.html">Profile</a>
+                <a href="login.html">Login</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <center>
+            <div class="image-section">
+                <img src="img/women.png" height="300" width="300">
+                <center> <p class="quote">"Every bite counts—nurture your baby with foods that nourish, protect, and strengthen."</p></center>
+            </div>
+        </center>
+
+            <div class="info-section">
+                <h2>What is this Website About?</h2>
+                <p>This website aims to simplify meal planning for pregnant ladies by reducing the time spent deciding what to eat. Based on your preferences, our website will suggest the perfect meal plan tailored to your needs.</p>
+                <a href="profile.html" class="button">Get Started</a>
+
+
+                <!-- Food Photos Section -->
+                <div class="photos">
+                    <a href="https://example.com/food1" target="_blank">
+                        <img src="Recipe photos_fyp/Avocado Salad.jpg" alt="Avocado Salad" class="photo-box">
+                        <p class="photo-caption">Avocado Salad</p>
+                    </a>
+                    <a href="https://example.com/food2" target="_blank">
+                        <img src="Recipe photos_fyp/Baked Chicken Breast.jpg" alt="Baked Chicken Breast" class="photo-box">
+                        <p class="photo-caption">Baked Chicken Breast</p>
+                    </a>
+                    <a href="https://example.com/food3" target="_blank">
+                        <img src="Recipe photos_fyp/BBQ Chicken Pizza.jpg" alt="BBQ Chicken Pizza" class="photo-box">
+                        <p class="photo-caption">BBQ Chicken Pizza</p>
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

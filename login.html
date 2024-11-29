@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Create Account</title>
+    <style>
+       /* Base styles */
+       body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+            background-image: url('https://josesoriano.com/wp-content/uploads/2023/02/4j059aga5s4-1024x683.jpg'); /* Replace with your background image URL */
+            background-size: cover; /* Ensures the background image covers the entire viewport */
+            background-position: center; /* Centers the background image */
+            background-attachment: fixed; /* Keeps the background image fixed while scrolling */
+            color: #333; /* Default text color */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.651); /* Add semi-transparent background to content for readability */
+            padding: 20px;
+            border-radius: 0px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for contrast */
+        }
+
+       /* Navbar styles */
+       .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+        }
+
+        .navbar nav a.active {
+            color: red;
+        }
+
+        .container {
+            background-color: rgba(139, 168, 175, 0.9); /* Semi-transparent white background */
+            padding: 30px 10px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            height: 400;
+            text-align: center;
+            position: relative;
+            top: 40px; /* Adjust for the fixed navbar */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 90%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        .button {
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        background-color: #0056b3;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .button:hover {
+        background-color: #0056b3;
+    }
+        .message {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .message a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        .message a:hover {
+            text-decoration: underline;
+        }
+
+        .form-container {
+            display: none; /* Hide both forms initially */
+        }
+
+        .form-container.active {
+            display: block; /* Show the active form */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">Logo</div>
+        <nav>
+            <a href="index.html" class="active">Home</a>
+            <a href="profile.html">Profile</a>
+           
+        </nav>
+    </header>
+
+    <!-- Login / Create Account Box -->
+    <div class="container">
+        <h2 id="form-title">Login</h2>
+        <form id="login-form" class="form-container active" action="#" method="POST">
+            <div class="input-group">
+                <label for="username">Email</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+            <p class="message">Not registered? <a href="#" onclick="toggleForms()">Create a Profile</a></p>
+        </form>
+
+        <form id="create-account-form" class="form-container" action="#" method="POST">
+            <div class="input-group">
+                <label for="new-username">Enter your Email</label>
+                <input type="text" id="new-username" name="new-username" required>
+            </div>
+            <div class="input-group">
+                <label for="new-password">Create Password</label>
+                <input type="password" id="new-password" name="new-password" required>
+            </div>
+            <div class="input-group">
+                <label for="new-password">Conform Password</label>
+                <input type="password" id="new-password" name="new-password" required>
+            </div>
+            <div class="input-group">
+                <label for="age">Age</label>
+                <select id="age" name="age" required>
+                    <option value="" disabled selected>Select Age</option>
+                    <option value="18-25">18-25</option>
+                    <option value="26-35">26-35</option>
+                    <option value="36-45">36-45</option>
+                    <option value="46+">46+</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="trimester">Trimester</label>
+                <select id="trimester" name="trimester" required>
+                    <option value="" disabled selected>Select Trimester</option>
+                    <option value="1">First</option>
+                    <option value="2">Second</option>
+                    <option value="3">Third</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="allergy">Allergy</label>
+                <select id="allergy" name="allergy">
+                    <option value="" disabled selected>Do you have any allergies?</option>
+                    <option value="none">None</option>
+                    <option value="nuts">Nuts</option>
+                    <option value="dairy">Dairy</option>
+                    <option value="gluten">Gluten</option>
+                    <option value="shellfish">Shellfish</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="genetic-condition">Genetic Condition</label>
+                <select id="genetic-condition" name="genetic-condition">
+                    <option value="" disabled selected>Do you have any genetic conditions?</option>
+                    <option value="none">None</option>
+                    <option value="diabetes">Diabetes</option>
+                    <option value="hypertension">Hypertension</option>
+                    <option value="heart-disease">Heart Disease</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="food-habits">Food Habits</label>
+                <select id="food-habits" name="food-habits" required>
+                    <option value="" disabled selected>Select Food Habits</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="non-vegetarian">Non-Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="pescatarian">Pescatarian</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+          
+        
+            <a href="profile.html" class="button">Create Profile</a>
+            <p class="message">Already registered? <a href="profile.html" onclick="toggleForms()">Login</a></p>
+        </form>
+    </div>
+
+    <script>
+        function toggleForms() {
+            const loginForm = document.getElementById('login-form');
+            const createAccountForm = document.getElementById('create-account-form');
+            const formTitle = document.getElementById('form-title');
+
+            if (loginForm.classList.contains('active')) {
+                loginForm.classList.remove('active');
+                createAccountForm.classList.add('active');
+                formTitle.textContent = 'Create Account';
+            } else {
+                createAccountForm.classList.remove('active');
+                loginForm.classList.add('active');
+                formTitle.textContent = 'Login';
+            }
+        }
+    </script>
+</body>
+</html>
