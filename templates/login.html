@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('https://josesoriano.com/wp-content/uploads/2023/02/4j059aga5s4-1024x683.jpg'); /* Replace with your background image URL */
+            background-size: cover; /* Ensures the background image covers the entire viewport */
+            background-position: center; /* Centers the background image */
+            background-attachment: fixed; /* Keeps the background image fixed while scrolling */
+            color: #333; /* Default text color */
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            box-sizing: border-box; /* Ensures padding and border are included in width/height */
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%; /* Ensures navbar stretches across the entire screen */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f9f9f9;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .navbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .navbar nav {
+            display: flex;
+        }
+
+        .navbar nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: black;
+            font-weight: 500;
+        }
+
+        .navbar nav a.active {
+            color: red;
+        }
+
+        /* Container Styling */
+        .container {
+            background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
+            width: 90%;
+            max-width: 400px;
+            padding: 40px 30px;
+            border-radius: 10px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+            margin-top: 80px; /* Offset from the fixed navbar */
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 90%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+
+        button {
+            width: 90%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .button {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            background-color: #0056b3;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .message a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        .message a:hover {
+            text-decoration: underline;
+        }
+
+        .form-container {
+            display: none; /* Hide both forms initially */
+        }
+
+        .form-container.active {
+            display: block; /* Show the active form */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">Pregnancy Food Planner</div>
+        <nav>
+            <a href="{% url 'home' %}" class="active">Home</a>
+            <a href="{% url 'starter' %}">Profile</a>
+        </nav>
+    </header>
+
+    <!-- Login Form -->
+    <div class="container">
+        <h2>Login</h2>
+        <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="username">Email</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p class="message">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <p class="message">Not registered? <a href="{% url 'signup' %}">Create a Profile</a></p>
+        </form>
+    </div>
+</body>
+</html>

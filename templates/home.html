@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnancy App UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Open+Sans:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-image: url("{% static 'images/background.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Navbar styles */
+        .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .navbar nav a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #34495e;
+            font-weight: 500;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar nav a:hover {
+            color: #e74c3c;
+        }
+
+        .navbar nav a.active {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        /* Content styles */
+        .main-content {
+            padding-top: 100px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .image-section img:hover {
+            transform: scale(1.1);
+        }
+
+        .quote {
+            margin-top: 10px;
+            font-style: italic;
+            color: #555;
+            font-size: 18px;
+        }
+
+        .info-section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-family: 'Open Sans', sans-serif;
+            color: #2c3e50;
+        }
+
+        .info-section p {
+            margin-bottom: 30px;
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .button {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #c0392b;
+        }
+
+        /* Food Photos Section */
+        .photos {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .photo-box {
+            width: 250px;
+            height: 250px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .photo-caption {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            padding: 5px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .photos {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .photo-box {
+                width: 100%;
+                height: 200px;
+            }
+
+            .main-content {
+                padding-top: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header/Navbar -->
+        <header class="navbar">
+            <div class="logo">Pregnancy Food Planner</div>
+            <nav>
+                <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+                <a href="{% url 'starter' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+                <a href="{% url 'login' %}" class="{% if request.resolver_match.url_name == 'login' %}active{% endif %}">Login</a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <center>
+                <div class="image-section">
+                    <img src="{% static 'images/women.png' %}" height="300" width="300" alt="Pregnant woman">
+                    <p class="quote">"Every bite counts—nurture your baby with foods that nourish, protect, and strengthen."</p>
+                </div>
+            </center>
+
+            <div class="info-section">
+                <h2>What is this Website About?</h2>
+                <p>This website aims to simplify meal planning for pregnant women by reducing the time spent deciding what to eat. Based on your preferences, our website will suggest the perfect meal plan tailored to your needs.</p>
+                <a href="{% url 'starter' %}" class="button">Get Started</a>
+
+                <!-- Food Photos Section -->
+                <div class="photos">
+                    <div>
+                        <div class="photo-box">
+                            <img src="{% static 'images/recipes/Avocado_Salad.jpg' %}" alt="Avocado Salad">
+                            <p class="photo-caption">Avocado Salad</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="photo-box">
+                            <img src="{% static 'images/recipes/Baked_Chicken_Breast.jpg' %}" alt="Baked Chicken Breast">
+                            <p class="photo-caption">Baked Chicken Breast</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="photo-box">
+                            <img src="{% static 'images/recipes/BBQ_Chicken_Pizza.jpg' %}" alt="BBQ Chicken Pizza">
+                            <p class="photo-caption">BBQ Chicken Pizza</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

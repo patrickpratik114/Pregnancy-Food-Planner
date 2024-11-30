@@ -1,0 +1,309 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnancy App UI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply box-sizing globally */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Ensure the page takes up the full height of the browser */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* General Body Styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url('https://josesoriano.com/wp-content/uploads/2023/02/4j059aga5s4-1024x683.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        /* Container Styling */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white background */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+
+        .navbar .logo {
+            font-size: 26px;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            color: #333;
+        }
+
+        .navbar nav a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar nav a:hover {
+            color: #007bff;
+        }
+
+        .navbar nav a.active {
+            color: #e74c3c;
+        }
+
+        /* Section Styling */
+        .section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 100px 40px 40px;  /* Added padding to account for fixed navbar */
+            max-width: 1100px;
+            margin: 0 auto;
+            gap: 30px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Left Section: Your Plan */
+        .your-plan {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .your-plan h2 {
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 30px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .calendar button {
+            background-color: #b8cbd6;
+            border: none;
+            border-radius: 50%;
+            font-weight: bold;
+            color: #333;
+            padding: 15px;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .calendar button:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Right Section: Meal Plan */
+        .meal-plan {
+            flex: 2;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .meal-plan h3 {
+            margin: 20px 0;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .meal-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .meal-row .photo-box {
+            width: 200px;
+            height: 110px;
+            background-color: #d3d3d3;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .meal-row .photo-box:hover {
+            transform: scale(1.05);
+        }
+
+        .meal-row .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .meal-row button {
+            padding: 12px 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .meal-row button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .section {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .meal-plan {
+                margin-top: 20px;
+                width: 90%;
+            }
+
+            .calendar {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+
+            .calendar button {
+                padding: 10px;
+            }
+
+            .meal-row {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .meal-row .photo-box {
+                width: 80%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="logo">Pregnancy Food Planner</div>
+        <nav>
+            <a href="{% url 'home' %}" class="active">Home</a>
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </nav>
+    </header>
+
+    <!-- Main Content Section -->
+    <div class="section">
+        <!-- Left Section: Your Plan -->
+        <div class="your-plan">
+            <h2>Your Plan</h2>
+            <div class="calendar">
+                <button>Mon</button>
+                <button>Tue</button>
+                <button>Wed</button>
+                <button>Thu</button>
+                <button>Fri</button>
+                <button>Sat</button>
+                <button>Sun</button>
+            </div>
+        </div>
+
+        <!-- Right Section: Meal Plan -->
+        <div class="meal-plan">
+            <center>
+                <h3>Breakfast</h3>
+            </center>
+            <div class="meal-row">
+                <div class="photo-box">
+                    <img src="{% static 'images/recipes/Avocado_Salad.jpg' %}" alt="Avocado Salad">
+                </div>
+                <div class="photo-box">
+                    <img src="{% static 'images/recipes/Fruit_Smoothie.jpeg' %}" alt="Fruit Smoothie">
+                </div>
+                <a href="https://example.com/breakfast" target="_blank"><button>View Breakfast</button></a>
+            </div>
+            <center>
+                <h3>Lunch</h3>
+            </center>
+            <div class="meal-row">
+                <div class="photo-box">
+                    <img src="{% static 'images/recipes/Baked_Chicken_Breast.jpg' %}" alt="Baked Chicken Breast">
+                </div>
+                <div class="photo-box">
+                    <img src="{% static 'images/recipes/Biryani.jpg' %}" alt="Biryani">
+                </div>
+                <a href="https://example.com/lunch" target="_blank"><button>View Lunch</button></a>
+            </div>
+            <center>
+                <h3>Dinner</h3>
+            </center>
+            <div class="meal-row">
+                <div class="photo-box">
+                    <img src="{% static 'images/recipes/Greek_Salad.jpg' %}" alt="Greek Salad">
+                </div>
+                <div class="photo-box">
+                    <img src="{% static 'images/recipes/Grilled_Chicken_Salad.jpeg' %}" alt="Grilled Chicken Salad">
+                </div>
+                <a href="https://example.com/dinner" target="_blank"><button>View Dinner</button></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
