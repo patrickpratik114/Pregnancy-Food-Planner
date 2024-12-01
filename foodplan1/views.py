@@ -85,3 +85,15 @@ def signup(request):
         'profile_form': profile_form,
     })
     
+    
+    
+def breakfast(request):
+    return render(request, 'breakfast.html')
+
+
+def lunch(request):
+    return render(request, 'lunch.html')
+
+
+def dinner(request):
+    return render(request, 'dinner.html')

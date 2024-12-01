@@ -275,7 +275,7 @@
                 <div class="photo-box">
                     <img src="{% static 'images/recipes/Fruit_Smoothie.jpeg' %}" alt="Fruit Smoothie">
                 </div>
-                <a href="https://example.com/breakfast" target="_blank"><button>View Breakfast</button></a>
+                <a href="{% url 'breakfast' %}"><button>View Breakfast</button></a>
             </div>
             <center>
                 <h3>Lunch</h3>
@@ -287,7 +287,7 @@
                 <div class="photo-box">
                     <img src="{% static 'images/recipes/Biryani.jpg' %}" alt="Biryani">
                 </div>
-                <a href="https://example.com/lunch" target="_blank"><button>View Lunch</button></a>
+                <a href="{% url 'lunch' %}"><button>View Lunch</button></a>
             </div>
             <center>
                 <h3>Dinner</h3>
@@ -299,7 +299,7 @@
                 <div class="photo-box">
                     <img src="{% static 'images/recipes/Grilled_Chicken_Salad.jpeg' %}" alt="Grilled Chicken Salad">
                 </div>
-                <a href="https://example.com/dinner" target="_blank"><button>View Dinner</button></a>
+                <a href="{% url 'dinner' %}"><button>View Dinner</button></a>
             </div>
         </div>
     </div>
