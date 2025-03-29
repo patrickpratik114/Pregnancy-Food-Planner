@@ -1,0 +1,56 @@
+
+
+
+
+
+{% extends "base.html" %}
+{% load static custom_filters %}
+
+{% block title %}Your Daily Meal Plan - Pregnancy Food Planner{% endblock %}
+
+{% block content %}
+<div class="meal-plan-container">
+    <h1 class="section-title">Meal Plan for {{ selected_day }}</h1>
+
+    <form method="get" action="{% url 'select_meal' %}" class="day-selector-form">
+        <label for="day-select">Select Day:</label>
+        <select name="day" id="day-select" onchange="this.form.submit()">
+            {% for day in days %}
+                <option value="{{ day }}" {% if selected_day == day %}selected{% endif %}>{{ day }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <div class="meal-grid">
+        <div class="meal-card">
+            <h2>Breakfast</h2>
+            {% with image_path="images/recipes/"|add:selected_meals.breakfast|underscore_slugify|add:".jpg" %}
+                <img src="{% static image_path %}" 
+                     alt="{{ selected_meals.breakfast }}"
+                     onerror="this.onerror=null; this.src='{% static 'images/placeholder.jpg' %}';">
+            {% endwith %}
+            <p>{{ selected_meals.breakfast|default:"No meal available" }}</p>
+        </div>
+
+        <div class="meal-card">
+            <h2>Lunch</h2>
+            {% with image_path="images/recipes/"|add:selected_meals.lunch|underscore_slugify|add:".jpg" %}
+                <img src="{% static image_path %}" 
+                     alt="{{ selected_meals.lunch }}"
+                     onerror="this.onerror=null; this.src='{% static 'images/placeholder.jpg' %}';">
+            {% endwith %}
+            <p>{{ selected_meals.lunch|default:"No meal available" }}</p>
+        </div>
+
+        <div class="meal-card">
+            <h2>Dinner</h2>
+            {% with image_path="images/recipes/"|add:selected_meals.dinner|underscore_slugify|add:".jpg" %}
+                <img src="{% static image_path %}" 
+                     alt="{{ selected_meals.dinner }}"
+                     onerror="this.onerror=null; this.src='{% static 'images/placeholder.jpg' %}';">
+            {% endwith %}
+            <p>{{ selected_meals.dinner|default:"No meal available" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

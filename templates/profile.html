@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static custom_filters %}
+
+{% block title %}{{ selected_day }} Meal Plan - Pregnancy Food Planner{% endblock %}
+
+{% block content %}
+<div class="planner-container">
+    <!-- Left Sidebar with Days -->
+    <div class="sidebar">
+        <h2>Weekly Plan</h2>
+        <div class="day-list">
+            {% for day in days %}
+                <div class="day-item">
+                    <a href="?day={{ day }}" 
+                       class="{% if selected_day == day %}active{% endif %}">
+                        {{ day }}
+                    </a>
+                    <form method="POST" action="{% url 'clear_day' %}" class="delete-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="day" value="{{ day }}">
+                        <button type="submit" class="delete-day">×</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Meal Plan Display (Right Side) -->
+    <div class="meal-plan">
+        <h1>{{ selected_day }} Meal Plan</h1>
+        
+        {% for meal_type in 'breakfast,lunch,dinner'|split %}
+            <div class="meal-row">
+                <div class="meal-box">
+                    <h3>{{ meal_type|title }}</h3>
+                    
+                    {% with meal_name=meal_plan|get_meal:meal_type %}
+                        {% if meal_name %}
+                            <div class="photo-box">
+                                
+
+                                <img src="{% static 'images/recipes/' %}{{ meal_name|underscore_slugify }}.jpg" alt="{{ meal_name }}" onerror="this.onerror=null; this.src='{% static 'images/placeholder.jpg' %}'" style="max-width: 100%; height: auto;">
+
+                                <div class="meal-details">
+                                    <p>{{ meal_name }}</p>
+
+                                    
+                                    <form method="post" action="{% url 'update_meal' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="day" value="{{ selected_day }}">
+                                        <input type="hidden" name="meal_type" value="{{ meal_type }}">
+                                        <button type="submit" class="secondary-button">Change</button>
+                                    </form>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="empty-meal">
+                                <p>No meal selected</p>
+
+                                <!-- ✅ Add button -->
+                                <form method="post" action="{% url 'update_meal' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="day" value="{{ selected_day }}">
+                                    <input type="hidden" name="meal_type" value="{{ meal_type }}">
+                                    <button type="submit" class="primary-button">Add {{ meal_type|title }}</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

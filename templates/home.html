@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Home - Pregnancy Food Planner{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <img src="{% static 'images/pregwoman.jpg' %}" alt="Pregnant woman">
+    <p class="quote">"Every bite counts—nurture your baby with foods that nourish, protect, and strengthen."</p>
+</div>
+
+<div class="info-section">
+    <h2>What is Pregnancy Food Planner?</h2>
+    <p>This website aims to simplify meal planning for pregnant women by reducing the time spent deciding what to eat. Based on your preferences, our website will suggest the perfect meal plan tailored to your nutritional needs during pregnancy.</p>
+    
+    {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" class="primary-button">My Profile</a>
+    {% else %}
+        <a href="{% url 'signup' %}" class="primary-button">Get Started</a>
+    {% endif %}
+
+    <div class="photos">
+        <div class="food-photo-box">
+            <img src="{% static 'images/recipes/Avocado_Salad.jpg' %}" alt="Avocado Salad">
+            <p class="photo-caption">Avocado Salad</p>
+        </div>
+        <div class="food-photo-box">
+            <img src="{% static 'images/recipes/Baked_Chicken_Breast.jpg' %}" alt="Baked Chicken Breast">
+            <p class="photo-caption">Baked Chicken Breast</p>
+        </div>
+        <div class="food-photo-box">
+            <img src="{% static 'images/recipes/BBQ_Chicken_Pizza.jpg' %}" alt="BBQ Chicken Pizza">
+            <p class="photo-caption">BBQ Chicken Pizza</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

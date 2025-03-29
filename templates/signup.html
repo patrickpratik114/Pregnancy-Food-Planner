@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Account - Pregnancy Food Planner{% endblock %}
+
+{% block content %}
+<div class="meal-plan-container">
+    <h1 class="section-title">Create Account</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="message-box {% if message.tags == 'error' %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form action="{% url 'signup' %}" method="POST" class="signup-form">
+        {% csrf_token %}
+
+        <div class="form-grid">
+            <div class="form-section">
+                <h3>Account Information</h3>
+                <div class="input-group">
+                    <label for="{{ user_form.username.id_for_label }}">Email Address</label>
+                    {{ user_form.username }}
+                    {% if user_form.username.errors %}
+                        <div class="field-error">{% for error in user_form.username.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ user_form.password.id_for_label }}">Password</label>
+                    {{ user_form.password }}
+                    {% if user_form.password.errors %}
+                        <div class="field-error">{% for error in user_form.password.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ user_form.confirm_password.id_for_label }}">Confirm Password</label>
+                    {{ user_form.confirm_password }}
+                    {% if user_form.confirm_password.errors %}
+                        <div class="field-error">{% for error in user_form.confirm_password.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>Pregnancy Profile</h3>
+                <div class="input-group">
+                    <label for="{{ profile_form.age.id_for_label }}">Age</label>
+                    {{ profile_form.age }}
+                    {% if profile_form.age.errors %}
+                        <div class="field-error">{% for error in profile_form.age.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ profile_form.trimester.id_for_label }}">Trimester</label>
+                    {{ profile_form.trimester }}
+                    {% if profile_form.trimester.errors %}
+                        <div class="field-error">{% for error in profile_form.trimester.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ profile_form.allergy.id_for_label }}">Food Allergies</label>
+                    {{ profile_form.allergy }}
+                    {% if profile_form.allergy.errors %}
+                        <div class="field-error">{% for error in profile_form.allergy.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ profile_form.genetic_condition.id_for_label }}">Genetic Conditions</label>
+                    {{ profile_form.genetic_condition }}
+                    {% if profile_form.genetic_condition.errors %}
+                        <div class="field-error">{% for error in profile_form.genetic_condition.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+
+                <div class="input-group">
+                    <label for="{{ profile_form.food_habits.id_for_label }}">Food Habits</label>
+                    {{ profile_form.food_habits }}
+                    {% if profile_form.food_habits.errors %}
+                        <div class="field-error">{% for error in profile_form.food_habits.errors %}<p>{{ error }}</p>{% endfor %}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="primary-button">Create Profile</button>
+            <p class="login-link">Already registered? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </form>
+</div>
+
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- jQuery (Required for Select2) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Initialize Select2 -->
+<script>
+    $(document).ready(function() {
+        $('.multi-select').select2({
+            placeholder: "Select options",
+            width: '100%',
+            closeOnSelect: false
+        });
+    });
+</script>
+
+<style>
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .form-section {
+        background: rgba(255, 255, 255, 0.5);
+        padding: 1.5rem;
+        border-radius: 10px;
+    }
+
+    .form-section h3 {
+        margin-top: 0;
+        margin-bottom: 1.25rem;
+        color: var(--text);
+        font-size: 1.2rem;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding-bottom: 0.75rem;
+    }
+
+    .input-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .input-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid rgba(0,0,0,0.1);
+        border-radius: 10px;
+        font-size: 1rem;
+        color: var(--text);
+        background-color: var(--white);
+        transition: border-color 0.3s ease;
+    }
+
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+    }
+
+    .field-error {
+        color: var(--danger);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem;
+        background: rgba(231, 76, 60, 0.1);
+        border-radius: 5px;
+    }
+
+    .form-actions {
+        text-align: center;
+    }
+
+    .login-link {
+        margin-top: 1rem;
+        color: var(--text-light);
+    }
+
+    .login-link a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .login-link a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
