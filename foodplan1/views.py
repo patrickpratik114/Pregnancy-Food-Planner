@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, Meals, MealPlan
 
+
 # Create your views here.
 def home(request):
     return render(request, 'home.html')
@@ -72,66 +73,6 @@ def clear_day(request):
     return redirect('profile')
 
 
-# def select_meal(request, meal_type):
-#     selected_day = request.GET.get('day', 'Monday')
-#     user_profile = get_object_or_404(Profile, user=request.user)
-#     meal_plan, _ = MealPlan.objects.get_or_create(user=request.user)
-
-#     # Map trimester strings to corresponding integers or values
-#     trimester_map = {
-#         'First': 1,
-#         'Second': 2,
-#         'Third': 3
-#     }
-#     trimester_value = trimester_map.get(user_profile.trimester, user_profile.trimester)
-
-#     # Prepare allergy and genetic condition
-#     allergy_value = user_profile.allergy[0] if user_profile.allergy else "No Allergy"
-#     genetic_condition_value = user_profile.genetic_condition[0] if user_profile.genetic_condition else "No Condition"
-
-#     # Filter meals based on user profile
-#     meals = Meals.objects.filter(
-#         Meal_Type=meal_type.capitalize(),
-#         Food_Habit=user_profile.food_habits,
-#         Allergy=allergy_value,
-#         Genetic_Condition=genetic_condition_value,
-#         age=user_profile.age,
-#         Trimester=trimester_value
-#     )
-
-#     # If no meals match strict criteria, relax some constraints
-#     if not meals.exists():
-#         meals = Meals.objects.filter(
-#             Meal_Type=meal_type.capitalize(),
-#             Food_Habit=user_profile.food_habits
-#         )
-
-#     # Add a method to get lowercase recipe for template
-#     for meal in meals:
-#         meal.recipe = meal.Recipe  # Add a lowercase recipe attribute
-
-#     context = {
-#         'meals': meals,
-#         'selected_day': selected_day,
-#         'meal_type': meal_type
-#     }
-
-#     return render(request, 'meal_selection.html', context)
-
-
-# def update_meal(request):
-#     if request.method == 'POST':
-#         day = request.POST.get('day')
-#         meal_type = request.POST.get('meal_type')
-#         recipe = request.POST.get('recipe')
-
-#         meal_plan, _ = MealPlan.objects.get_or_create(user=request.user)
-#         plan = meal_plan.plan.copy()
-#         plan[day][meal_type] = recipe
-#         meal_plan.plan = plan
-#         meal_plan.save()
-
-#         return redirect(reverse('profile') + f'?day={day}')
 
 def update_meal(request):
     if request.method == 'POST':
@@ -208,6 +149,9 @@ def update_meal(request):
         meal_plan.save()
 
         return redirect(f'/profile/?day={day}')
+    
+
+
 
 
 
@@ -330,3 +274,35 @@ def select_meal(request):
         'selected_meals': selected_meals,
         'days': days,
     })
+
+
+
+
+from django.http import JsonResponse
+from .models import PregnancyDietaryNeeds
+
+def get_nutrition_details(request):
+    recipe_name = request.GET.get('recipe')
+
+    # Use filter().first() to avoid MultipleObjectsReturned
+    nutrition = PregnancyDietaryNeeds.objects.filter(recipe=recipe_name).first()
+
+    if nutrition:
+        data = {
+            "calories": nutrition.calories,
+            "protein": nutrition.protein,
+            "vitamin_b9": nutrition.vitamin_b9,
+            "vitamin_d": nutrition.vitamin_d,
+            "vitamin_a": nutrition.vitamin_a,
+            "iron": nutrition.iron,
+            "iodine": nutrition.iodine,
+            "calcium": nutrition.calcium,
+            "omega_3": nutrition.omega_3,
+        }
+    else:
+        data = {
+            "error": "Nutrition data not found for recipe"
+        }
+
+    return JsonResponse(data)
+

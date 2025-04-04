@@ -73,7 +73,6 @@ class Meals(models.Model):
 
 class PregnancyDietaryNeeds(models.Model):
     recipe = models.TextField(db_column='Recipe', blank=True, null=True)  # Field name made lowercase.
-    cuisine = models.TextField(db_column='Cuisine', blank=True, null=True)  # Field name made lowercase.
     calories = models.IntegerField(db_column='Calories', blank=True, null=True)  # Field name made lowercase.
     protein = models.FloatField(db_column='Protein', blank=True, null=True)  # Field name made lowercase.
     vitamin_b9 = models.IntegerField(db_column='Vitamin_B9', blank=True, null=True)  # Field name made lowercase.

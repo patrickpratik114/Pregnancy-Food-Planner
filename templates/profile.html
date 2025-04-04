@@ -4,6 +4,40 @@
 {% block title %}{{ selected_day }} Meal Plan - Pregnancy Food Planner{% endblock %}
 
 {% block content %}
+<style>
+    .details-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #ffcc00;
+        color: black;
+        padding: 5px 10px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .secondary-button {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .nutrition-popup {
+        position: fixed;
+        top: 50px;
+        right: 30px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 15px;
+        z-index: 9999;
+        max-width: 300px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        border-radius: 8px;
+    }
+</style>
+
 <div class="planner-container">
     <!-- Left Sidebar with Days -->
     <div class="sidebar">
@@ -28,36 +62,33 @@
     <!-- Meal Plan Display (Right Side) -->
     <div class="meal-plan">
         <h1>{{ selected_day }} Meal Plan</h1>
-        
+
         {% for meal_type in 'breakfast,lunch,dinner'|split %}
             <div class="meal-row">
-                <div class="meal-box">
+                <div class="meal-box" style="position: relative;">
                     <h3>{{ meal_type|title }}</h3>
-                    
+
                     {% with meal_name=meal_plan|get_meal:meal_type %}
                         {% if meal_name %}
                             <div class="photo-box">
-                                
-
                                 <img src="{% static 'images/recipes/' %}{{ meal_name|underscore_slugify }}.jpg" alt="{{ meal_name }}" onerror="this.onerror=null; this.src='{% static 'images/placeholder.jpg' %}'" style="max-width: 100%; height: auto;">
-
                                 <div class="meal-details">
                                     <p>{{ meal_name }}</p>
-
-                                    
-                                    <form method="post" action="{% url 'update_meal' %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="day" value="{{ selected_day }}">
-                                        <input type="hidden" name="meal_type" value="{{ meal_type }}">
-                                        <button type="submit" class="secondary-button">Change</button>
-                                    </form>
                                 </div>
+
+                                <button class="details-button" onclick="showNutrition('{{ meal_name }}')">Details</button>
+
+                                <form method="post" action="{% url 'update_meal' %}" style="position: absolute; bottom: 10px; right: 10px;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="day" value="{{ selected_day }}">
+                                    <input type="hidden" name="meal_type" value="{{ meal_type }}">
+                                    <button type="submit" class="secondary-button">Change</button>
+                                </form>
                             </div>
                         {% else %}
                             <div class="empty-meal">
                                 <p>No meal selected</p>
 
-                                <!-- ✅ Add button -->
                                 <form method="post" action="{% url 'update_meal' %}">
                                     {% csrf_token %}
                                     <input type="hidden" name="day" value="{{ selected_day }}">
@@ -70,6 +101,38 @@
                 </div>
             </div>
         {% endfor %}
+
+        <!-- Nutrition Popup Container -->
+        <div id="nutrition-popup" class="nutrition-popup" style="display:none;"></div>
     </div>
 </div>
+
+<script>
+function showNutrition(recipeName) {
+    fetch(`/nutrition-details/?recipe=${encodeURIComponent(recipeName)}`)
+    .then(response => response.json())
+    .then(data => {
+        const popup = document.getElementById('nutrition-popup');
+        if (data.error) {
+            popup.innerHTML = `<strong>Error:</strong> ${data.error}`;
+        } else {
+            popup.innerHTML = `
+                <h4>${recipeName}</h4>
+                <p><strong>Calories:</strong> ${data.calories}</p>
+                <p><strong>Protein:</strong> ${data.protein}g</p>
+                <p><strong>Vitamin B9:</strong> ${data.vitamin_b9} mcg</p>
+                <p><strong>Vitamin A:</strong> ${data.vitamin_a} IU</p>
+                <p><strong>Vitamin D:</strong> ${data.vitamin_d} IU</p>
+                <p><strong>Iron:</strong> ${data.iron} mg</p>
+                <p><strong>Calcium:</strong> ${data.calcium} mg</p>
+                <p><strong>Iodine:</strong> ${data.iodine} mcg</p>
+                <p><strong>Omega-3:</strong> ${data.omega_3} g</p>
+                <button onclick="document.getElementById('nutrition-popup').style.display='none';">Close</button>
+            `;
+        }
+        popup.style.display = 'block';
+    })
+    .catch(error => console.error('Error fetching nutrition details:', error));
+}
+</script>
 {% endblock %}
