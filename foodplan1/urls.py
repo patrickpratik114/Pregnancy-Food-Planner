@@ -29,4 +29,6 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(), 
         name='password_reset_complete'),
     path('profile/', views.update_profile, name='profile'),
+    path('verify-email/<uidb64>/<token>/', views.verify_email, name='verify_email'),
+    path('resend-verification/', views.resend_verification, name='resend_verification'),
 ]

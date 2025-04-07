@@ -24,7 +24,8 @@ class Profile(models.Model):
 
     allergy = models.JSONField(blank=True, null=True)
     genetic_condition = models.JSONField(blank=True, null=True)
-
+    email_verified = models.BooleanField(default=False)
+    
     def __str__(self):
         return f"{self.user.username} - {self.age}"
     

@@ -10,6 +10,13 @@ from django.urls import reverse
 from django.utils.text import slugify
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Profile, Meals, MealPlan
+from django.core.validators import EmailValidator
+from django.core.exceptions import ValidationError
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 
 # Create your views here.
@@ -152,9 +159,68 @@ def update_meal(request):
         return redirect(f'/plan/?day={day}')
     
 
+# Email validation and verification functions
+def send_verification_email(request, user):
+    """
+    Send verification email to user with a unique token link
+    """
+    token = default_token_generator.make_token(user)
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    
+    # Use localhost with port for development
+    domain = request.get_host() if request else "localhost:8000"
+    protocol = "http"  # Use http for local development
+    
+    verification_url = f"{protocol}://{domain}/verify-email/{uid}/{token}/"
+    
+    subject = "Verify Your Email Address"
+    html_message = render_to_string('email/verification_email.html', {
+        'user': user,
+        'verification_url': verification_url,
+    })
+    plain_message = f"Hi {user.username}, please verify your email by clicking this link: {verification_url}"
+    
+    try:
+        result = send_mail(
+            subject=subject,
+            message=plain_message,
+            from_email='shresthapratik124@gmail.com',
+            recipient_list=[user.email],
+            html_message=html_message,
+            fail_silently=False
+        )
+        print(f"Verification email result: {result}")
+        print(f"Email sent to: {user.email}")
+        print(f"Verification URL: {verification_url}")
+        return True
+    except Exception as e:
+        print(f"Failed to send verification email: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
-
+def verify_email(request, uidb64, token):
+    """
+    Verify email using the token from the verification link
+    """
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    
+    if user is not None and default_token_generator.check_token(user, token):
+        # Update user profile to mark email as verified
+        profile = Profile.objects.get(user=user)
+        profile.email_verified = True
+        profile.save()
+        
+        messages.success(request, "Your email has been verified successfully! You can now log in.")
+        return redirect('login')
+    else:
+        messages.error(request, "The verification link is invalid or has expired.")
+        return redirect('home')
 
 
 def user_login(request):
@@ -162,12 +228,30 @@ def user_login(request):
         email = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=email, password=password)
+        
         if user is not None:
-            auth_login(request, user)
-            return redirect('plan')
+            # Check if email is verified
+            try:
+                profile = Profile.objects.get(user=user)
+                if not profile.email_verified:
+                    messages.warning(request, "Please verify your email before logging in. Check your inbox for the verification link.")
+                    # Option to resend verification email
+                    if request.POST.get('resend_verification'):
+                        send_verification_email(user)
+                        messages.info(request, "Verification email has been resent.")
+                    return render(request, 'login.html', {'resend_option': True, 'email': email})
+                
+                # Email verified, proceed with login
+                auth_login(request, user)
+                return redirect('plan')
+            
+            except Profile.DoesNotExist:
+                messages.error(request, "User profile not found.")
+                return redirect('login')
         else:
             messages.error(request, "Wrong Email or Password")
-            return redirect('user_login')
+            return redirect('login')
+            
     return render(request, 'login.html')
 
 
@@ -175,26 +259,88 @@ def user_logout(request):
     auth_logout(request)
     return redirect('home')
 
-
 def signup(request):
     if request.method == 'POST':
+        # Print all POST data for debugging
+        print("POST data:", request.POST)
+        
         user_form = UserSignupForm(request.POST)
         profile_form = ProfileForm(request.POST)
-
+        
+        # Print form validation status
+        print("User form is valid:", user_form.is_valid())
+        if not user_form.is_valid():
+            print("User form errors:", user_form.errors)
+        
+        print("Profile form is valid:", profile_form.is_valid())
+        if not profile_form.is_valid():
+            print("Profile form errors:", profile_form.errors)
+        
         if user_form.is_valid() and profile_form.is_valid():
+            # Try different ways of getting the email
+            email = None
+            if 'email' in user_form.cleaned_data:
+                email = user_form.cleaned_data['email']
+                print(f"Email from cleaned_data['email']: {email}")
+            elif 'username' in user_form.cleaned_data:
+                email = user_form.cleaned_data['username']  # If using username as email
+                print(f"Email from cleaned_data['username']: {email}")
+            
+            # Fallbacks from POST data
+            if not email:
+                email = request.POST.get('email') or request.POST.get('username', '')
+                print(f"Email from POST data: {email}")
+            
             password = user_form.cleaned_data.get('password')
             confirm_password = request.POST.get('confirm_password')
+            
+            print(f"Final email being used: '{email}'")
+
+            # Safe check before using email
+            if not email:
+                messages.error(request, "Email address is required.")
+                return render(request, 'signup.html', {
+                    'user_form': user_form,
+                    'profile_form': profile_form,
+                })
+
+            # Only check domain if we have a valid email with @ symbol
+            if '@' in email:
+                domain = email.split('@')[1]
+                if domain.lower() in ['example.com', 'test.com']:
+                    messages.error(request, "Please use a real email address.")
+                    return render(request, 'signup.html', {
+                        'user_form': user_form,
+                        'profile_form': profile_form,
+                    })
 
             if password != confirm_password:
                 messages.error(request, "Passwords do not match!")
             else:
                 try:
+                    # Check if email already exists
+                    if User.objects.filter(email=email).exists():
+                        messages.error(request, "A user with this email already exists. Please try logging in.")
+                        return render(request, 'signup.html', {
+                            'user_form': user_form,
+                            'profile_form': profile_form,
+                        })
+                        
+                    # Create user
                     user = user_form.save(commit=False)
+                    # Make sure username is set if using email as username
+                    if not user.username and email:
+                        user.username = email
+                    user.email = email  # Explicitly set email
                     user.set_password(password)
                     user.save()
 
+                    # Create profile
                     profile = profile_form.save(commit=False)
                     profile.user = user
+                    
+                    # Add email_verified field to profile if not exists
+                    profile.email_verified = False  
 
                     # Convert list to comma-separated string
                     profile.allergy = ','.join(profile_form.cleaned_data.get('allergy', []) or ['No Allergy'])
@@ -202,11 +348,17 @@ def signup(request):
 
                     profile.save()
 
-                    messages.success(request, "Account created successfully!")
+                    # Send verification email
+                    if send_verification_email(request, user):
+                        messages.success(request, "Account created successfully! Please check your email to verify your account.")
+                    else:
+                        messages.warning(request, "Account created, but we couldn't send a verification email. Please contact support.")
+                    
                     return redirect('login')
 
-                except IntegrityError:
-                    messages.error(request, "A user with this email already exists. Please try logging in.")
+                except IntegrityError as e:
+                    print(f"IntegrityError: {e}")
+                    messages.error(request, f"Account creation failed: {e}")
         else:
             for field, error in user_form.errors.items():
                 messages.error(request, f"{field.capitalize()}: {', '.join(error)}")
@@ -221,6 +373,22 @@ def signup(request):
         'profile_form': profile_form,
     })
 
+def resend_verification(request):
+    """View to handle resending verification emails"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            if send_verification_email(user):
+                messages.success(request, "Verification email sent successfully! Please check your inbox.")
+            else:
+                messages.error(request, "Failed to send verification email. Please try again later.")
+        except User.DoesNotExist:
+            messages.error(request, "No account exists with this email address.")
+    
+    return redirect('login')
+
+
 def breakfast(request):
     return render(request, 'breakfast.html')
 
@@ -232,12 +400,6 @@ def lunch(request):
 def dinner(request):
     return render(request, 'dinner.html')
 
-
-
-# STEP 1: Update views.py inside your `foodplan1` app
-
-from django.shortcuts import render, get_object_or_404
-from .models import Profile, Meals, MealPlan
 
 def select_meal(request):
     selected_day = request.GET.get('day', 'Monday')
@@ -275,8 +437,6 @@ def select_meal(request):
         'selected_meals': selected_meals,
         'days': days,
     })
-
-
 
 
 from django.http import JsonResponse
@@ -318,44 +478,35 @@ def custom_password_reset(request):
             try:
                 email = form.cleaned_data['email']
                 associated_users = User.objects.filter(email=email)
-                if associated_users.exists():
-                    for user in associated_users:
-                        # Print debug info
-                        print(f"Attempting to send reset email to {email} for user {user.username}")
-                        try:
-                            # This is what PasswordResetForm.save() does
-                            from django.core.mail import send_mail
-                            subject = "Password Reset Requested"
-                            message = f"Password reset for user {user.username}"
-                            from_email = "shresthapratik124@gmail.com"
-                            recipient_list = [email]
-                            
-                            # Attempt to send a plain email
-                            send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-                            print(f"Debug email sent to {email}")
-                            messages.success(request, f"Debug email sent to {email}")
-                        except Exception as e:
-                            print(f"Error sending debug email: {e}")
-                            messages.error(request, f"Error sending debug email: {e}")
                 
-                # Continue with the normal form save
-                form.save(
-                    request=request,
-                    use_https=request.is_secure(),
-                    from_email="shresthapratik124@gmail.com",
-                    email_template_name='registration/password_reset_email.html',
-                    subject_template_name='registration/password_reset_subject.txt'
-                )
-                messages.success(request, "Password reset email has been sent.")
-                return redirect('password_reset_done')
+                if associated_users.exists():
+                    # Get the site domain (localhost:8000)
+                    site_domain = request.get_host()
+                    
+                    # Use Django's built-in password reset functionality
+                    form.save(
+                        request=request,
+                        use_https=False,  # Use http for local development
+                        from_email="shresthapratik124@gmail.com",
+                        email_template_name='registration/password_reset_email.html',
+                        subject_template_name='registration/password_reset_subject.txt',
+                        domain_override=site_domain  # Important for local development
+                    )
+                    
+                    messages.success(request, "Password reset email has been sent to your email address.")
+                    return redirect('password_reset_done')
+                else:
+                    messages.error(request, "No user found with this email address.")
+                    
             except Exception as e:
-                print(f"Error in password reset: {e}")
-                messages.error(request, f"Error in password reset: {e}")
+                print(f"Error in password reset: {str(e)}")
+                import traceback
+                traceback.print_exc()
+                messages.error(request, "Error sending password reset email. Please try again.")
     else:
         form = PasswordResetForm()
     
     return render(request, 'registration/password_reset_form.html', {'form': form})
-
 
 @login_required
 def update_profile(request):
