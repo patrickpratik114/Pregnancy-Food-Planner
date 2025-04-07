@@ -37,8 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     'foodplan1',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -77,9 +80,9 @@ WSGI_APPLICATION = 'foodplan.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'new_fyp',
+        'NAME': 'food_data',
         'USER': 'root',
-        'PASSWORD': 'Toshiro@123',
+        'PASSWORD': 'P@$$word12',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -133,3 +136,46 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'shresthapratik124@gmail.com'
+EMAIL_HOST_PASSWORD = 'hseb kmzv imbc pzmg'  
+DEFAULT_FROM_EMAIL = 'shresthapratik124@gmail.com'
+SERVER_EMAIL = 'shresthapratik124@gmail.com'
+PASSWORD_RESET_TIMEOUT = 14400
+
+
+# # In settings.py
+# import logging
+# logging.basicConfig(level=logging.DEBUG)
+
+
+# # For debugging email issues
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Temporarily output emails to console
+# DEBUG = True
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django.request': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'django.core.mail': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

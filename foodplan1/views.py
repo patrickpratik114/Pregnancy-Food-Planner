@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .forms import UserSignupForm, ProfileForm
@@ -61,7 +62,7 @@ def profile(request):
         'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 
                  'Friday', 'Saturday', 'Sunday']
     }
-    return render(request, 'profile.html', context)
+    return render(request, 'plan.html', context)
 
 
 def clear_day(request):
@@ -69,8 +70,8 @@ def clear_day(request):
         day = request.POST.get('day')
         meal_plan = get_object_or_404(MealPlan, user=request.user)
         meal_plan.clear_day(day)
-        return redirect(reverse('profile') + f'?day={day}')
-    return redirect('profile')
+        return redirect(reverse('plan') + f'?day={day}')
+    return redirect('plan')
 
 
 
@@ -148,7 +149,7 @@ def update_meal(request):
         meal_plan.plan[day][meal_type] = selected_meal
         meal_plan.save()
 
-        return redirect(f'/profile/?day={day}')
+        return redirect(f'/plan/?day={day}')
     
 
 
@@ -163,7 +164,7 @@ def user_login(request):
         user = authenticate(request, username=email, password=password)
         if user is not None:
             auth_login(request, user)
-            return redirect('profile')
+            return redirect('plan')
         else:
             messages.error(request, "Wrong Email or Password")
             return redirect('user_login')
@@ -306,3 +307,86 @@ def get_nutrition_details(request):
 
     return JsonResponse(data)
 
+
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib import messages
+
+def custom_password_reset(request):
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            try:
+                email = form.cleaned_data['email']
+                associated_users = User.objects.filter(email=email)
+                if associated_users.exists():
+                    for user in associated_users:
+                        # Print debug info
+                        print(f"Attempting to send reset email to {email} for user {user.username}")
+                        try:
+                            # This is what PasswordResetForm.save() does
+                            from django.core.mail import send_mail
+                            subject = "Password Reset Requested"
+                            message = f"Password reset for user {user.username}"
+                            from_email = "shresthapratik124@gmail.com"
+                            recipient_list = [email]
+                            
+                            # Attempt to send a plain email
+                            send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+                            print(f"Debug email sent to {email}")
+                            messages.success(request, f"Debug email sent to {email}")
+                        except Exception as e:
+                            print(f"Error sending debug email: {e}")
+                            messages.error(request, f"Error sending debug email: {e}")
+                
+                # Continue with the normal form save
+                form.save(
+                    request=request,
+                    use_https=request.is_secure(),
+                    from_email="shresthapratik124@gmail.com",
+                    email_template_name='registration/password_reset_email.html',
+                    subject_template_name='registration/password_reset_subject.txt'
+                )
+                messages.success(request, "Password reset email has been sent.")
+                return redirect('password_reset_done')
+            except Exception as e:
+                print(f"Error in password reset: {e}")
+                messages.error(request, f"Error in password reset: {e}")
+    else:
+        form = PasswordResetForm()
+    
+    return render(request, 'registration/password_reset_form.html', {'form': form})
+
+
+@login_required
+def update_profile(request):
+    user_profile = get_object_or_404(Profile, user=request.user)
+    
+    if request.method == 'POST':
+        profile_form = ProfileForm(request.POST, instance=user_profile)
+        
+        if profile_form.is_valid():
+            try:
+                profile = profile_form.save(commit=False)
+                
+                # Convert list to comma-separated string
+                profile.allergy = ','.join(profile_form.cleaned_data.get('allergy', []) or ['No Allergy'])
+                profile.genetic_condition = ','.join(profile_form.cleaned_data.get('genetic_condition', []) or ['No Condition'])
+                
+                profile.save()
+                messages.success(request, "Profile updated successfully!")
+                return redirect('plan')
+            except Exception as e:
+                messages.error(request, f"Error updating profile: {e}")
+    else:
+        # For GET requests, pre-populate form with existing data
+        # Convert comma-separated strings back to lists for the form
+        initial_data = {
+            'allergy': user_profile.allergy.split(',') if user_profile.allergy else ['No Allergy'],
+            'genetic_condition': user_profile.genetic_condition.split(',') if user_profile.genetic_condition else ['No Condition'],
+        }
+        profile_form = ProfileForm(instance=user_profile, initial=initial_data)
+    
+    return render(request, 'update_profile.html', {
+        'profile_form': profile_form,
+        'user_profile': user_profile,
+    })

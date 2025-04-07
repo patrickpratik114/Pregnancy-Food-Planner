@@ -30,7 +30,12 @@
             </div>
             <div class="form-actions">
                 <button type="submit" class="primary-button">Login</button>
-                <p class="signup-link">Not registered? <a href="{% url 'signup' %}">Create a Profile</a></p>
+                <p class="signup-link">
+                    Not registered? <a href="{% url 'signup' %}">Create a Profile</a>
+                </p>
+                <p class="forgot-link">
+                    <a href="{% url 'password_reset' %}">Forgot your password?</a>
+                </p>
             </div>
         </form>
     </div>
@@ -98,19 +103,22 @@
         margin-bottom: 1.25rem;
     }
     
-    .signup-link {
+    .signup-link,
+    .forgot-link {
         margin-top: 1rem;
         color: var(--text-light);
     }
     
-    .signup-link a {
+    .signup-link a,
+    .forgot-link a {
         color: var(--primary);
         text-decoration: none;
         font-weight: 500;
         transition: color 0.3s ease;
     }
     
-    .signup-link a:hover {
+    .signup-link a:hover,
+    .forgot-link a:hover {
         text-decoration: underline;
     }
     
